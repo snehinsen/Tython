@@ -12,7 +12,6 @@ public class Compiler {
     public static void compile(File TyFile, File pyFile) {
         try (BufferedReader reader = new BufferedReader(new FileReader(TyFile));
              BufferedWriter writer = new BufferedWriter(new FileWriter(pyFile))) {
-
             String line;
             while ((line = reader.readLine()) != null) {
                 // Process each line from the Tython file
@@ -20,9 +19,7 @@ public class Compiler {
                 writer.write(processedLine);
                 writer.newLine();
             }
-
             System.out.println("Compilation complete");
-
         } catch (IOException e) {
             System.err.println("Error reading or writing file: " + e.getMessage());
         }
@@ -43,11 +40,8 @@ public class Compiler {
                 content = content.substring(1, content.length() - 1);
             }
 
-            // Construct the Python print statement
             return String.format("%sprint(f\"%s\")", " ".repeat(leadingSpaces), content);
         }
-
-        // Return line unchanged if it's not a printf statement
         return line;
     }
 
