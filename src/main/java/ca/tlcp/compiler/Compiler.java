@@ -17,9 +17,8 @@ public class Compiler {
             while ((line = reader.readLine()) != null) {
                 // Process each line from the Tython file
                 String processedLine = processLine(line);
-                // Write the processed line to the output file
                 writer.write(processedLine);
-                writer.newLine(); // Write a new line character
+                writer.newLine();
             }
 
             System.out.println("Compilation complete");
@@ -39,7 +38,7 @@ public class Compiler {
             // Remove the 'printf(' at the beginning and the closing ')' at the end
             String content = trimmedLine.substring(7, trimmedLine.length() - 1).trim();
 
-            // Remove surrounding quotes from the format string if present
+            // Remove surrounding quotes from format string if present
             if (content.startsWith("\"") && content.endsWith("\"")) {
                 content = content.substring(1, content.length() - 1);
             }
