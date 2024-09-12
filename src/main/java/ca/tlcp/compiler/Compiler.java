@@ -9,8 +9,8 @@ import java.io.IOException;
 
 public class Compiler {
 
-    public static void compile(File TythonFile, File pyFile) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(TythonFile));
+    public static void compile(File TyFile, File pyFile) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(TyFile));
              BufferedWriter writer = new BufferedWriter(new FileWriter(pyFile))) {
 
             String line;
