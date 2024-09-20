@@ -1,5 +1,8 @@
 package ca.tlcp.compiler;
 
+import ca.tlcp.compiler.memory.MemoryManager;
+import ca.tlcp.compiler.memory.Variable;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -11,15 +14,16 @@ public class Compiler {
 
     public static void compile(File TyFile, File pyFile) {
         try (BufferedReader reader = new BufferedReader(new FileReader(TyFile));
-             BufferedWriter writer = new BufferedWriter(new FileWriter(pyFile))) {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(pyFile))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                // Process each line from the Tython file
+                // Process lines from file
                 String processedLine = processLine(line);
                 writer.write(processedLine);
                 writer.newLine();
             }
             System.out.println("Compilation complete");
+            System.out.println("VARIABLES: \n " + MemoryManager.VERIABLES);
         } catch (IOException e) {
             System.err.println("Error reading or writing file: " + e.getMessage());
         }
@@ -42,6 +46,25 @@ public class Compiler {
 
             return String.format("%sprint(f\"%s\")", " ".repeat(leadingSpaces), content);
         }
+        // detect veriable setting
+        if (line.contains("=")) {
+            if (line.startsWith("int") || line.startsWith("float") || line.startsWith("bool") || line.startsWith("str")) {
+                String label = "";
+                String type = "";
+                var firstSpace = line.indexOf(' ');
+                type = line.substring(0, firstSpace-1);
+                System.out.println(line);
+                var equalsSign = line.indexOf('=');
+                line = line.substring(firstSpace, equalsSign).trim();
+                System.out.printf("\"%s\"%n", line);
+                System.out.println("= at index " + equalsSign);
+                label = line;
+                Variable var = new Variable(label, type);
+                MemoryManager.addVar(var);
+                System.out.printf("Variable \"%s\" of type %s added successfully%n", var.getLabel(), var.getDataType());
+            }
+        }
+
         return line;
     }
 
