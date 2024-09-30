@@ -12,4 +12,6 @@ public class Variable {
     private String label;
     private String dataType;
     private boolean isArray;
+
+
 }

@@ -32,7 +32,8 @@ public class Compiler {
     private static String processLine(String line) {
         //  indentation
         int leadingSpaces = countLeadingSpaces(line);
-        String trimmedLine = line.trim();
+        String trimmedLine = line.toString();
+        trimmedLine = trimmedLine.trim();
 
         // printf conversions
         if (trimmedLine.startsWith("printf(") && trimmedLine.endsWith(")")) {
@@ -47,12 +48,12 @@ public class Compiler {
         }
         // detect variable setting
         if (line.contains("=")) {
-            if (line.startsWith("int[]") || line.startsWith("float[]") || line.startsWith("bool[]") || line.startsWith("str[]")) {
+            if (trimmedLine.startsWith("int[]") || trimmedLine.startsWith("float[]") || trimmedLine.startsWith("bool[]") || trimmedLine.startsWith("str[]")) {
                 String label = "";
                 String type = "";
                 var firstSpace = line.indexOf(' ');
                 type = line.substring(0, firstSpace);
-                System.out.println(line);
+                System.out.println(trimmedLine);
                 var equalsSign = line.indexOf('=');
                 line = line.substring(firstSpace, equalsSign).trim();
                 System.out.printf("\"%s\"%n", line);
@@ -62,25 +63,36 @@ public class Compiler {
 
                 MemoryManager.addVar(var);
                 System.out.printf("Variable \"%s\" of type %s added successfully%n", var.getLabel(), var.getDataType());
-            } else if (line.startsWith("int") || line.startsWith("float") || line.startsWith("bool") || line.startsWith("str")) {
+            } else if (trimmedLine.startsWith("int") || trimmedLine.startsWith("float") || trimmedLine.startsWith("bool") || trimmedLine.startsWith("str")) {
                 String label = "";
                 String type = "";
-                var firstSpace = line.indexOf(' ');
-                type = line.substring(0, firstSpace);
-                System.out.println(line);
-                var equalsSign = line.indexOf('=');
-                line = line.substring(firstSpace, equalsSign).trim();
-                System.out.printf("\"%s\"%n", line);
+                var firstSpace = trimmedLine.indexOf(' ');
+                type = trimmedLine.substring(0, firstSpace);
+                System.out.println(trimmedLine);
+                var equalsSign = trimmedLine.indexOf('=');
+                String adjustedLine = trimmedLine.substring(firstSpace, equalsSign).trim();
+                System.out.printf("\"%s\"%n", adjustedLine);
                 System.out.println("= at index " + equalsSign);
-                label = line;
+                label = adjustedLine;
                 Variable var = new Variable(label, type, false);
                 MemoryManager.addVar(var);
                 System.out.printf("Variable \"%s\" of type %s added successfully%n", var.getLabel(), var.getDataType());
             }
         } else if (line.startsWith("# ") && CompilerConfiguration.willIgnoreComments()) {
+            line =
+                    line
+                            .replaceFirst("str ", "")
+                            .replaceFirst("bool ", "")
+                            .replaceFirst("float ", "")
+                            .replaceFirst("int ", "");
             return line;
         }
-
+        line =
+                line
+                        .replaceFirst("str ", "")
+                        .replaceFirst("bool ", "")
+                        .replaceFirst("float ", "")
+                        .replaceFirst("int ", "");
         return line;
     }
 
