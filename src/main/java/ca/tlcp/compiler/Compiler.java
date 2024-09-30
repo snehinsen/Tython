@@ -1,7 +1,7 @@
 package ca.tlcp.compiler;
 
-import ca.tlcp.compiler.memory.MemoryManager;
-import ca.tlcp.compiler.memory.Variable;
+import ca.tlcp.memory.MemoryManager;
+import ca.tlcp.memory.Variable;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -36,7 +36,6 @@ public class Compiler {
 
         // printf conversions
         if (trimmedLine.startsWith("printf(") && trimmedLine.endsWith(")")) {
-            // Remove the 'printf(' at the beginning and the closing ')' at the end
             String content = trimmedLine.substring(7, trimmedLine.length() - 1).trim();
 
             // Remove surrounding quotes from format string if present
@@ -46,23 +45,40 @@ public class Compiler {
 
             return String.format("%sprint(f\"%s\")", " ".repeat(leadingSpaces), content);
         }
-        // detect veriable setting
+        // detect variable setting
         if (line.contains("=")) {
-            if (line.startsWith("int") || line.startsWith("float") || line.startsWith("bool") || line.startsWith("str")) {
+            if (line.startsWith("int[]") || line.startsWith("float[]") || line.startsWith("bool[]") || line.startsWith("str[]")) {
                 String label = "";
                 String type = "";
                 var firstSpace = line.indexOf(' ');
-                type = line.substring(0, firstSpace-1);
+                type = line.substring(0, firstSpace);
                 System.out.println(line);
                 var equalsSign = line.indexOf('=');
                 line = line.substring(firstSpace, equalsSign).trim();
                 System.out.printf("\"%s\"%n", line);
                 System.out.println("= at index " + equalsSign);
                 label = line;
-                Variable var = new Variable(label, type);
+                Variable var = new Variable(label, type, true);
+
+                MemoryManager.addVar(var);
+                System.out.printf("Variable \"%s\" of type %s added successfully%n", var.getLabel(), var.getDataType());
+            } else if (line.startsWith("int") || line.startsWith("float") || line.startsWith("bool") || line.startsWith("str")) {
+                String label = "";
+                String type = "";
+                var firstSpace = line.indexOf(' ');
+                type = line.substring(0, firstSpace);
+                System.out.println(line);
+                var equalsSign = line.indexOf('=');
+                line = line.substring(firstSpace, equalsSign).trim();
+                System.out.printf("\"%s\"%n", line);
+                System.out.println("= at index " + equalsSign);
+                label = line;
+                Variable var = new Variable(label, type, false);
                 MemoryManager.addVar(var);
                 System.out.printf("Variable \"%s\" of type %s added successfully%n", var.getLabel(), var.getDataType());
             }
+        } else if (line.startsWith("# ") && CompilerConfiguration.willIgnoreComments()) {
+            return line;
         }
 
         return line;

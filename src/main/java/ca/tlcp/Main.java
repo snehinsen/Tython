@@ -1,6 +1,7 @@
 package ca.tlcp;
 
 import ca.tlcp.compiler.Compiler;
+import ca.tlcp.compiler.CompilerConfiguration;
 
 import java.io.File;
 
@@ -25,10 +26,13 @@ public class Main {
             } else if (args[argI].equals("-O")) {
                 if (argI + 1 < args.length) {
                     pyFile = new File(args[++argI]);
-                } else {
+                }
+                else {
                     System.err.println("No file specified after '-O'");
                     System.exit(400);
                 }
+            } else if (args[argI].equals("--ignore-comments")) {
+                CompilerConfiguration.setIgnoreComments(true);
             } else {
                 System.err.println("Unknown argument: " + args[argI]);
                 System.exit(400);

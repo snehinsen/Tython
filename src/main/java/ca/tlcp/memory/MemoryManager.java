@@ -1,4 +1,4 @@
-package ca.tlcp.compiler.memory;
+package ca.tlcp.memory;
 
 import java.util.ArrayList;
 import java.util.List;
