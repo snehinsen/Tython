@@ -19,6 +19,9 @@ public class Compiler {
             while ((line = reader.readLine()) != null) {
                 // Process lines from file
                 String processedLine = processLine(line);
+                if (processedLine.isBlank() || processedLine.isEmpty()) {
+                    continue;
+                }
                 writer.write(processedLine);
                 writer.newLine();
             }
@@ -47,11 +50,11 @@ public class Compiler {
             return String.format("%sprint(f\"%s\")", " ".repeat(leadingSpaces), content);
         }
         // detect variable setting
-        if (line.contains("=")) {
+        if (trimmedLine.contains(" = ")) {
             if (trimmedLine.startsWith("int[]") || trimmedLine.startsWith("float[]") || trimmedLine.startsWith("bool[]") || trimmedLine.startsWith("str[]")) {
                 String label = "";
                 String type = "";
-                var firstSpace = line.indexOf(' ');
+                var firstSpace = trimmedLine.indexOf(' ');
                 type = line.substring(0, firstSpace);
                 System.out.println(trimmedLine);
                 var equalsSign = line.indexOf('=');
@@ -78,14 +81,12 @@ public class Compiler {
                 MemoryManager.addVar(var);
                 System.out.printf("Variable \"%s\" of type %s added successfully%n", var.getLabel(), var.getDataType());
             }
-        } else if (line.startsWith("# ") && CompilerConfiguration.willIgnoreComments()) {
-            line =
-                    line
-                            .replaceFirst("str ", "")
-                            .replaceFirst("bool ", "")
-                            .replaceFirst("float ", "")
-                            .replaceFirst("int ", "");
-            return line;
+        }
+
+        if (trimmedLine.startsWith("# ") && CompilerConfiguration.willIgnoreComments()) {
+            return "";
+        } else if (trimmedLine.startsWith("else if")) {
+            trimmedLine.replaceFirst("else if", "elif");
         }
         line =
                 line
